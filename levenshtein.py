@@ -21,29 +21,35 @@ def minimum_edit_distance(s1, s2):
 
 if __name__ == '__main__':
 
-    data = pd.read_csv('E:\\Downloads\\MOCK_DATA.csv', header=None)
+    data = pd.read_csv('E:\\Downloads\\MOCK_DATA.csv', header=None)  # path to data to cluster remove 'header=None' if data has header
+    threshold = 1  # max distance between data
+    threshold_amount = 4  # min amount of clustered data per data
 
     order_numbers = data[0].tolist()
 
-    print(order_numbers)
     count = 0
     best_matches = []
+    above_threshold = []
+    print('----------clustering starting----------')
     for order_number_outside in order_numbers:
         current_matches = []
         count = count + 1
         for order_number_inside in reversed(order_numbers):
             distance = minimum_edit_distance(order_number_outside, order_number_inside)
-            if distance < 3:
-                # print(order_number_outside, 'is compatible with', order_number_inside, 'with a distance of ', distance)
+            if distance <= threshold:
                 current_matches.append(order_number_inside)
-            else:
-                print(order_number_outside, 'is not compatible with', order_number_inside, 'with a distance of ', distance)
+
         best_matches.append(current_matches)
-    print(count)
     unique_best_matches = []
+    #  make matches unique
     for best in best_matches:
         if best not in unique_best_matches:
             unique_best_matches.append(best)
-    for best in unique_best_matches:
-        print(best)
-    print(len(best_matches))
+    #  filter for threshold_amount
+    for unique_best in unique_best_matches:
+        if len(unique_best) >= threshold_amount:
+            above_threshold.append(unique_best)
+    #  print list
+    for x in above_threshold:
+        print(x)
+    print('----------clustering done----------')
